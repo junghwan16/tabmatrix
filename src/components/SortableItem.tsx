@@ -2,6 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash, HandGrabbing } from "@phosphor-icons/react";
 import { Todo, QuadrantType } from "../hooks/useEisenhowerMatrix";
+import { useTranslation } from "react-i18next";
 
 interface SortableItemProps {
   id: string;
@@ -17,6 +18,8 @@ export function SortableItem({
   onToggle,
   onDelete,
 }: SortableItemProps) {
+  const { t } = useTranslation();
+
   const {
     attributes,
     listeners,
@@ -67,7 +70,7 @@ export function SortableItem({
           onDelete();
         }}
         className="ml-auto text-red-500"
-        aria-label="Delete"
+        aria-label={t("todo.actions.delete")}
       >
         <Trash size={18} />
       </button>

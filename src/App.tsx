@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Plus,
   GearSix,
@@ -32,6 +32,8 @@ import {
 import { SortableTodoItem } from "./components/SortableTodoItem";
 import { QuadrantDroppable } from "./components/QuadrantDroppable";
 import { TodoItem } from "./components/TodoItem";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 interface TodoListProps {
   title: string;
@@ -45,7 +47,12 @@ interface TodoListProps {
   onDeleteTodo: (id: number) => void;
   onEditTodo: (
     id: number,
-    updates: { text?: string; description?: string; dueDate?: string; expanded?: boolean }
+    updates: {
+      text?: string;
+      description?: string;
+      dueDate?: string;
+      expanded?: boolean;
+    }
   ) => void;
   onToggleExpand: (id: number) => void;
 }
@@ -63,11 +70,13 @@ function TodoList({
   onEditTodo,
   onToggleExpand,
 }: TodoListProps) {
+  const { t } = useTranslation();
   const [newTodo, setNewTodo] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [isAddingDetailed, setIsAddingDetailed] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
@@ -79,6 +88,50 @@ function TodoList({
       setIsAddingDetailed(false);
     }
   };
+
+  const handleCancel = () => {
+    setNewTodo("");
+    setNewDescription("");
+    setNewDueDate("");
+    setIsAdding(false);
+    setIsAddingDetailed(false);
+  };
+
+  const handleInputBlur = (e: React.FocusEvent) => {
+    // Don't cancel if clicking on related elements
+    if (
+      e.relatedTarget &&
+      (e.relatedTarget === document.querySelector(".details-btn") ||
+        e.relatedTarget === document.querySelector(".cancel-btn") ||
+        e.currentTarget.contains(e.relatedTarget as Node))
+    ) {
+      return;
+    }
+
+    if (!newTodo.trim()) {
+      handleCancel();
+    } else {
+      handleAddTodo();
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      if (!isAddingDetailed || e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        handleAddTodo();
+      }
+    } else if (e.key === "Escape") {
+      handleCancel();
+    }
+  };
+
+  // Focus the input when isAdding changes to true
+  useEffect(() => {
+    if (isAdding && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isAdding]);
 
   const todoIds = todos.map((todo) => todo.id.toString());
 
@@ -97,38 +150,30 @@ function TodoList({
       {/* 새 항목 추가 UI를 항상 상단에 고정 */}
       <div className="p-3 border-b border-gray-100 flex-shrink-0">
         {isAdding ? (
-          <div className="flex flex-col">
+          <div className="flex flex-col" onBlur={handleInputBlur} tabIndex={-1}>
             <div className="flex">
               <input
+                ref={inputRef}
                 type="text"
                 value={newTodo}
                 onChange={(e) => setNewTodo(e.target.value)}
-                className="border border-gray-200 p-2 flex-grow rounded-l text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                placeholder="할 일을 입력하세요..."
+                className="border border-gray-200 p-2 flex-grow rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                placeholder={t("todo.editing.title")}
+                onKeyDown={handleKeyPress}
                 autoFocus
-                onKeyPress={(e) =>
-                  e.key === "Enter" && !isAddingDetailed && handleAddTodo()
-                }
               />
               <button
-                onClick={handleAddTodo}
-                className="bg-blue-500 text-white px-3 py-2 rounded-r hover:bg-blue-600 transition"
-              >
-                추가
-              </button>
-              <button
+                className="ml-1 p-2 text-gray-400 hover:text-gray-600 transition details-btn"
                 onClick={() => setIsAddingDetailed(!isAddingDetailed)}
-                className="ml-1 p-2 text-gray-400 hover:text-gray-600 transition"
-                title={isAddingDetailed ? "세부 정보 숨기기" : "세부 정보 추가"}
+                title={
+                  isAddingDetailed ? t("todo.hideDetails") : t("todo.details")
+                }
               >
                 <TextAlignLeft size={18} />
               </button>
               <button
-                onClick={() => {
-                  setIsAdding(false);
-                  setIsAddingDetailed(false);
-                }}
-                className="ml-1 p-2 text-gray-400 hover:text-gray-600 transition"
+                className="ml-1 p-2 text-gray-400 hover:text-gray-600 transition cancel-btn"
+                onClick={handleCancel}
               >
                 <X size={18} />
               </button>
@@ -145,8 +190,13 @@ function TodoList({
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
                     className="border border-gray-200 p-2 w-full rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none min-h-[60px]"
-                    placeholder="설명 (선택사항)"
+                    placeholder={t("todo.description")}
                     rows={2}
+                    onKeyDown={(e) => {
+                      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                        handleAddTodo();
+                      }
+                    }}
                   />
                 </div>
                 <div className="flex items-center">
@@ -166,7 +216,8 @@ function TodoList({
             onClick={() => setIsAdding(true)}
             className="flex items-center text-sm text-gray-500 hover:text-gray-700 transition py-2 px-3 rounded-md w-full border border-dashed border-gray-200 hover:border-gray-300"
           >
-            <Plus size={18} className="mr-1" />새 항목 추가
+            <Plus size={18} className="mr-1" />
+            {t("todo.add")}
           </button>
         )}
       </div>
@@ -198,9 +249,7 @@ function TodoList({
               <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center rounded-full bg-gray-50">
                 <Plus size={24} weight="light" />
               </div>
-              새 항목을 추가하거나
-              <br />
-              다른 섹션에서 항목을 끌어오세요
+              {t("todo.emptyState")}
             </div>
           )}
         </div>
@@ -210,6 +259,7 @@ function TodoList({
 }
 
 function App() {
+  const { t } = useTranslation();
   const {
     getTodosByQuadrant,
     addTodo,
@@ -219,18 +269,18 @@ function App() {
     toggleExpanded,
     moveTodo,
     findTodoSource,
-    clearAllData
+    clearAllData,
   } = useEisenhowerMatrix();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
-  
+
   // 설정 메뉴
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const quadrants = [
     {
-      title: "긴급 & 중요",
-      subtitle: "즉시 처리",
+      title: t("quadrants.urgent-important.title"),
+      subtitle: t("quadrants.urgent-important.subtitle"),
       id: "urgent-important" as QuadrantType,
       icon: <CheckCircle size={24} weight="duotone" />,
       bgColor: "bg-red-50",
@@ -238,8 +288,8 @@ function App() {
       textColor: "text-red-700",
     },
     {
-      title: "덜 긴급 & 중요",
-      subtitle: "일정 계획",
+      title: t("quadrants.not-urgent-important.title"),
+      subtitle: t("quadrants.not-urgent-important.subtitle"),
       id: "not-urgent-important" as QuadrantType,
       icon: <Clock size={24} weight="duotone" />,
       bgColor: "bg-blue-50",
@@ -247,8 +297,8 @@ function App() {
       textColor: "text-blue-700",
     },
     {
-      title: "긴급 & 덜 중요",
-      subtitle: "위임하기",
+      title: t("quadrants.urgent-not-important.title"),
+      subtitle: t("quadrants.urgent-not-important.subtitle"),
       id: "urgent-not-important" as QuadrantType,
       icon: <PhoneCall size={24} weight="duotone" />,
       bgColor: "bg-amber-50",
@@ -256,8 +306,8 @@ function App() {
       textColor: "text-amber-700",
     },
     {
-      title: "덜 긴급 & 덜 중요",
-      subtitle: "최소화/제거",
+      title: t("quadrants.not-urgent-not-important.title"),
+      subtitle: t("quadrants.not-urgent-not-important.subtitle"),
       id: "not-urgent-not-important" as QuadrantType,
       icon: <X size={24} weight="duotone" />,
       bgColor: "bg-green-50",
@@ -361,37 +411,39 @@ function App() {
         <header className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-semibold text-gray-800">
-              아이젠하워 매트릭스
+              {t("app.title")}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              효율적인 시간 관리와 우선순위 설정을 위한 도구
-            </p>
+            <p className="text-sm text-gray-500 mt-1">{t("app.subtitle")}</p>
           </div>
-          
-          {/* 설정 드롭다운 */}
-          <div className="relative">
-            <button 
-              onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
-              className="p-2 rounded-full hover:bg-gray-100 transition"
-            >
-              <GearSix size={20} className="text-gray-500" />
-            </button>
-            
-            {isSettingsOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                <button
-                  onClick={() => {
-                    if (window.confirm("정말 모든 데이터를 삭제하시겠습니까?")) {
-                      clearAllData();
-                      setIsSettingsOpen(false);
-                    }
-                  }}
-                  className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
-                >
-                  모든 데이터 삭제
-                </button>
-              </div>
-            )}
+
+          {/* Language switcher and settings */}
+          <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
+
+            <div className="relative">
+              <button
+                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+              >
+                <GearSix size={20} className="text-gray-500" />
+              </button>
+
+              {isSettingsOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                  <button
+                    onClick={() => {
+                      if (window.confirm(t("settings.clearConfirm"))) {
+                        clearAllData();
+                        setIsSettingsOpen(false);
+                      }
+                    }}
+                    className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                  >
+                    {t("settings.clearAll")}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -436,9 +488,7 @@ function App() {
         </DndContext>
 
         <footer className="mt-10 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
-          <p>
-            © {new Date().getFullYear()} 아이젠하워 매트릭스 | 시간 관리 도구
-          </p>
+          <p>{t("footer.copyright", { year: new Date().getFullYear() })}</p>
         </footer>
       </div>
     </div>

@@ -1,0 +1,55 @@
+{
+  "app": {
+    "title": "아이젠하워 매트릭스",
+    "subtitle": "효율적인 시간 관리와 우선순위 설정을 위한 도구"
+  },
+  "settings": {
+    "title": "설정",
+    "clearAll": "모든 데이터 삭제",
+    "clearConfirm": "정말 모든 데이터를 삭제하시겠습니까?"
+  },
+  "footer": {
+    "copyright": "© {{year}} 아이젠하워 매트릭스 | 시간 관리 도구"
+  },
+  "quadrants": {
+    "urgent-important": {
+      "title": "긴급 & 중요",
+      "subtitle": "즉시 처리"
+    },
+    "not-urgent-important": {
+      "title": "덜 긴급 & 중요",
+      "subtitle": "일정 계획"
+    },
+    "urgent-not-important": {
+      "title": "긴급 & 덜 중요",
+      "subtitle": "위임하기"
+    },
+    "not-urgent-not-important": {
+      "title": "덜 긴급 & 덜 중요",
+      "subtitle": "최소화/제거"
+    }
+  },
+  "todo": {
+    "add": "새 항목 추가",
+    "addButton": "추가",
+    "cancel": "취소",
+    "details": "세부 정보 추가",
+    "hideDetails": "세부 정보 숨기기",
+    "description": "설명 (선택사항)",
+    "dueDate": "마감일",
+    "emptyState": "새 항목을 추가하거나 다른 섹션에서 항목을 끌어오세요",
+    "editing": {
+      "title": "할 일",
+      "finishHint": "편집을 완료하려면 외부를 클릭하거나 Enter를 누르세요"
+    },
+    "date": {
+      "overdue": "기한 초과",
+      "today": "오늘",
+      "soon": "곧 마감"
+    }
+  },
+  "language": {
+    "en": "English",
+    "ko": "한국어"
+  }
+}

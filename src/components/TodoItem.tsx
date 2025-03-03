@@ -1,11 +1,14 @@
 import { Calendar } from "@phosphor-icons/react";
 import { Todo } from "../hooks/useEisenhowerMatrix";
+import { useTranslation } from "react-i18next";
 
 interface TodoItemProps {
   todo: Todo;
 }
 
 export function TodoItem({ todo }: TodoItemProps) {
+  const { t, i18n } = useTranslation();
+
   // 마감일 포맷팅
   const formatDueDate = (dateStr?: string) => {
     if (!dateStr) return null;
@@ -17,7 +20,7 @@ export function TodoItem({ todo }: TodoItemProps) {
 
     try {
       const date = new Date(dateStr);
-      return date.toLocaleDateString(undefined, options);
+      return date.toLocaleDateString(i18n.language, options);
     } catch (e) {
       return dateStr;
     }

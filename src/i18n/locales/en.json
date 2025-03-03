@@ -1,0 +1,59 @@
+{
+  "app": {
+    "title": "Eisenhower Matrix",
+    "subtitle": "A tool for effective time management and prioritization"
+  },
+  "settings": {
+    "title": "Settings",
+    "clearAll": "Delete All Data",
+    "clearConfirm": "Are you sure you want to delete all data?"
+  },
+  "footer": {
+    "copyright": "© {{year}} Eisenhower Matrix | Time Management Tool"
+  },
+  "quadrants": {
+    "urgent-important": {
+      "title": "Urgent & Important",
+      "subtitle": "Do Immediately"
+    },
+    "not-urgent-important": {
+      "title": "Not Urgent & Important",
+      "subtitle": "Schedule"
+    },
+    "urgent-not-important": {
+      "title": "Urgent & Less Important",
+      "subtitle": "Delegate"
+    },
+    "not-urgent-not-important": {
+      "title": "Not Urgent & Less Important",
+      "subtitle": "Minimize/Eliminate"
+    }
+  },
+  "todo": {
+    "add": "Add New Item",
+    "addButton": "Add",
+    "cancel": "Cancel",
+    "details": "Add Details",
+    "hideDetails": "Hide Details",
+    "description": "Description (optional)",
+    "dueDate": "Due Date",
+    "emptyState": "Add new items or drag them from other sections",
+    "editing": {
+      "title": "Task",
+      "finishHint": "Press Enter to add, click outside to cancel or save"
+    },
+    "date": {
+      "overdue": "Overdue",
+      "today": "Today",
+      "soon": "Coming soon"
+    },
+    "actions": {
+      "delete": "Delete",
+      "drag": "Drag to reorder"
+    }
+  },
+  "language": {
+    "en": "English",
+    "ko": "한국어"
+  }
+}
