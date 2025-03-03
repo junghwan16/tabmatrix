@@ -1,14 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  Trash,
-  CheckCircle,
-  X,
-  Calendar,
-  CaretDown,
-  CaretUp,
-  TextAlignLeft,
-} from "@phosphor-icons/react";
+import { Trash, Calendar, CaretDown, CaretUp } from "@phosphor-icons/react";
 import { Todo } from "../hooks/useEisenhowerMatrix";
 import { useState, useRef, useEffect } from "react";
 

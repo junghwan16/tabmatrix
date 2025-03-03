@@ -7,7 +7,7 @@ interface TodoItemProps {
 }
 
 export function TodoItem({ todo }: TodoItemProps) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   // 마감일 포맷팅
   const formatDueDate = (dateStr?: string) => {

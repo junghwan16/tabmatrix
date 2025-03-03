@@ -1,13 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
-  Plus,
   GearSix,
   CheckCircle,
   Clock,
   PhoneCall,
   X,
-  Calendar,
-  TextAlignLeft,
 } from "@phosphor-icons/react";
 import {
   DndContext,
@@ -19,18 +16,12 @@ import {
   useSensors,
   DragOverlay,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import {
   useEisenhowerMatrix,
   Todo,
   QuadrantType,
 } from "./hooks/useEisenhowerMatrix";
-import { SortableTodoItem } from "./components/SortableTodoItem";
-import { QuadrantDroppable } from "./components/QuadrantDroppable";
 import { TodoItem } from "./components/TodoItem";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
