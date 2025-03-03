@@ -6,32 +6,41 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        uses: bahmutov/npm-install@v1.9.0
 
       - name: Build project
         run: npm run build
 
-      - name: Upload artifact  # v4 사용!
-        uses: actions/upload-artifact@v4 # 최신 버전으로 변경
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v4
         with:
           name: production-files
           path: ./dist
-          retention-days: 5 # (선택 사항) 아티팩트 유지 기간 (기본값 90일)
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-files
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
